@@ -1,0 +1,541 @@
+<div class="container-fluid bg-fff py-3 box-shadow-1 position-relative z-index-0 ">
+  <div class="px-4 d-flex align-items-center">
+   <button class="btn back-btn" routerLink="/home/projects"><img src="/assets/images/back.png"></button>
+   <div class="fw-600 text-f9a ml-3">{{projectDetails.code}}</div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="page-wrapper">
+    <div class="row">
+      <div class="col-md-9">
+
+        <!-- <div *ngIf="projectDetails.length==0">
+              <span *ngIf="!loading">No records found!</span>
+              <span *ngIf="loading">Loading...</span>
+          </div> -->
+
+        <div class="card p-3 mb-3 border-0">
+          <div class="d-flex justify-content-between">
+            <h2 class="fs-16 fw-600 text-a5a mt-2">
+              Product <span class="sprite-img s-down-arrow ml-3"></span>
+            </h2>
+            <div *ngIf="projectDetails">
+              <select (change)="userChoose($event.target.value)" class="form-control custom-select d-inline w-auto mb-0 mr-3 fw-600 fs-14">
+                <option selected disabled>Select Tester</option>
+                <option *ngFor="let list of userslist" [value]="list.id">
+                  {{list.firstName + " " + list.lastName}}
+                </option>
+              </select>
+              <select (change)="statusChoose($event.target.value)" class="form-control custom-select d-inline w-auto mb-0 mr-3 fw-600 fs-14">
+                <option selected disabled>Select Status</option>
+                <option *ngFor="let list of projectStatus" [selected]="list.id == projectDetails.projStatus.id" [value]="list.id">
+                  {{list.name}}
+                </option>
+              </select>
+              <a class="text-5d5 mt-1 watcher-btn" [hidden]="!updateLoading" href="javascript:void(0)">Please wait...</a>
+              <a class="text-5d5 mt-1 watcher-btn" [hidden]="updateLoading" (click)="saveStatus()" href="javascript:void(0)">Update Status</a>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-3 border-0">
+          <div class="table-responsive bf-fff">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Project Code</th>
+                  <th>Model Number</th>
+                  <th>Created date</th>
+                  <!-- <th>Resolution</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{projectDetails.id}}</td>
+                  <td>{{projectDetails.code}}</td>
+                  <td>{{projectDetails.modelNumber}}</td>
+                  <td *ngIf="projectDetails.srf">{{projectDetails.srf.srfAcceptedDate || '-'}}</td>
+                  <!-- <td>-------</td> -->
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card mb-3 border-0">
+          <div class="table-responsive bf-fff">
+            <table class="table table-vertical">
+              <tbody>
+                <tr>
+                  <td>Link</td>
+                  <td> <button class="btn watcher-btn float-right" data-keyboard="false" data-backdrop="static" data-toggle="modal"
+                    data-target="#links">Add</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Documents</td>
+                  <td>
+                    <div class="row no-gutters">
+                      <div class="col-sm-9">
+                        <ul class="nav docsList">
+                            <li *ngFor="let list of projectDetails.InfoSubmitted">{{list.infoType.name}} <button class="removeIcon mx-1 btn">X</button></li>
+                        </ul>
+                      </div>
+                      <div class="col-sm-3">
+                          <button class="btn watcher-btn float-right" data-keyboard="false" data-backdrop="static" data-toggle="modal"
+                          data-target="#docs">Add</button>
+                      </div>
+                    </div>
+                   
+                  </td>
+                </tr>
+                <tr>
+                  <td>Report</td>
+                  <td>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Description</td>
+                  <td>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
+                    has been the industry's standard
+                    dummy text ever since the 1500s, when an unknown
+                    printer took a galley of type and scrambled it to make a type specimen
+                    book.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <button class="btn dotted-btn mb-3" data-keyboard="false" data-backdrop="static" data-toggle="modal"
+          data-target="#samples">Add More Samples </button>
+        <div class="card mb-3 border-0">
+          <div class="table-responsive bf-fff">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Serial Number</th>
+                  <th>Product Received Date</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let list of projectDetails.sampleInfo">
+                  <td>{{list.serialNumber}}</td>
+                  <td>{{list.receivedDate | date: 'dd MMM yyyy'}}</td>             
+                  <td><button class="btn btn-empty" title="Edit" data-keyboard="false" data-backdrop="static" data-toggle="modal"
+                    data-target="#editsamplesModal" (click)="editData(list.id)"><i class="far fa-edit"></i></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card mb-3 border-0">
+          <h2 class="fs-16 fw-600 text-a5a p-3 mb-3 border-b-1">
+            Label <span class="sprite-img s-down-arrow ml-3"></span>
+          </h2>
+          <div class="p-3">
+            <ul class="nav label-chips">
+              <li>To do</li>
+              <li>Important</li>
+            </ul>
+
+          </div>
+        </div>
+        <div class="card mb-3 border-0">
+          <h2 class="fs-16 fw-600 text-a5a p-3 mb-3 border-b-1">
+            Comments <span class="sprite-img s-down-arrow ml-3"></span>
+          </h2>
+          <div class="p-3">
+            <ul class="comments-nav">
+              <li class="comments-card  text-5d5" *ngFor="let item of listComments">
+                  <div class="float-right">
+                      <label class="checkmarkContainer">
+                          <input type="checkbox" >
+                          <span class="check-mark"></span>
+                          Visible to Manufacture
+                        </label>
+                  </div>
+                  <div class="d-flex w-100">
+                <div class="comments-pic mx-3"><img src="/assets/images/avatar.png"></div>
+                <div class="comments-details w-100">
+                   
+                  <div class="commentor-name fs-14 fw-600 mb-1">{{item.firstName}}</div>
+                  
+                  <div class="row w-100">
+                    <div class="col-sm-9 col-md-10">{{item.comment}}</div>
+                    <div class="col-sm-3 col-md-2 text-right">{{item.createdAt | date: 'dd MMM yyyy'}}</div>
+                  </div>
+                  </div>
+                </div>
+              </li>
+              <li [hidden]="!loadComment"><div class="comments-details w-100 text-center">Loading...</div></li>
+            </ul>
+            <div class="post-comments p-3">
+            <form [formGroup]="commentForm" (ngSubmit)="addComments()">
+              <div class="row no-gutters">
+                <div class="col-sm-9 col-md-10 commentsInput position-relative">
+                  <input formControlName="comment" type="text" placeholder="Comments.." class="form-control">
+                  <span class="comment-icon position-absolute"><img src="/assets/images/Shape.png"></span>
+                </div>
+                <div class="col-sm-3 col-md-2">
+                  <div class="w-100 pl-1">
+                    <button type="submit" class="btn btn-block">Add Comment</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-3 border-0">
+          <h2 class="fs-16 fw-600 text-a5a p-3 mb-3 border-b-1">
+            History <span class="sprite-img s-down-arrow ml-3"></span>
+          </h2>
+      <div class="p-3">
+
+              <ul class="comments-nav">
+                <li *ngFor="let item of historyList" class="comments-card d-flex w-100 text-5d5">
+                  <div class="mx-3"><img src="/assets/images/history.png"></div>
+                  <div class="w-100">
+                  
+                    <div class="row w-100">
+                      <div class="col-md-3">
+                          <div class="fw-600">{{item.description}}                     </div>
+                          <div class="">{{item.createdAt | date: 'dd MMM yyyy'}}</div>
+                        </div>
+                      <div class="col-md-8 fw-600">{{item.createdInfo.firstName}} {{item.createdInfo.roles.name}}</div>
+                      <div class="col-md-1 text-center"><span class="sprite-img s-info"></span></div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+
+      </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <h2 class="fs-16 fw-600 text-a5a border-b-1 mb-3 p-3">
+            Details <span class="sprite-img s-down-arrow ml-3"></span>
+          </h2>
+          <div class="p-3 mb-5">
+            <h2 class="fs-14 fw-600 text-5d5 mb-2">
+              Details
+            </h2>
+            <div class="border-dotted-f9a-1px px-3 py-2 mx-2 mb-3">
+              Rakesh
+            </div>
+            <h2 class="fs-14 fw-600 text-5d5 mb-2">
+              Assigned By
+            </h2>
+            <div class="border-dotted-f9a-1px px-3 py-2 mx-2 mb-3">
+              Ashwani
+            </div>
+            <h2 class="fs-14 fw-600 text-5d5 mb-2">
+              Manufacturing Name
+            </h2>
+            <div class="border-dotted-f9a-1px px-3 py-2 mx-2 mb-3">
+              Natraj
+            </div>
+            <h2 class="fs-14 fw-600 text-5d5 mb-2">
+              Approved By
+            </h2>
+            <div class="border-dotted-f9a-1px px-3 py-2 mx-2 mb-3">
+              Raj
+            </div>
+          </div>
+          <h2 class="fs-14 fw-600 text-a5a mb-0 border-b-1 border-t-1 mb-3 p-3">
+              Watcher <span class="sprite-img s-down-arrow ml-3"></span>
+            </h2>
+            <div class="">
+              <ul class="watcherList nav flex-column p-0 m-0 text-f9a">
+                  <li [hidden]="!processing">Processing...</li>
+                  <li [hidden]="processing" *ngFor="let list of projectDetails.watcherInfo">{{list.users.firstName}} <button (click)='removeWatcher(list.userId)' class="removeIcon float-right btn">X</button></li>
+              </ul>
+              <div class="d-block text-center mt-3">
+              <button class="btn watcher-btn mb-3" data-keyboard="false" data-backdrop="static" data-toggle="modal"
+              data-target="#watcher">Add watchers</button>
+            </div>
+          </div>
+          <h2 class="fs-16 fw-600 text-a5a mb-0 border-b-1 border-t-1 mb-3 p-3">
+            Date <span class="sprite-img s-down-arrow ml-3"></span>
+          </h2>
+          <div class="p-3 mb-3">
+            <h2 class="fs-14 fw-600 text-5d5 mb-2">
+              Created
+            </h2>
+            <div class="border-dotted-f9a-1px px-3 py-2 mx-2 mb-3">
+                {{projectDetails.createdAt | date : 'dd/mm/yyyy' }}
+            </div>
+            <h2 class="fs-14 fw-600 text-5d5 mb-2">
+              Updated
+            </h2>
+            <div class="border-dotted-f9a-1px px-3 py-2 mx-2 mb-3">
+                {{projectDetails.updatedAt | timeAgo}}
+            </div>
+          </div>
+          <!-- <h2 class="fs-16 fw-600 text-a5a mb-0 border-b-1 border-t-1 mb-3 p-3">
+            Products Added <span class="sprite-img s-down-arrow ml-3"></span>
+          </h2>
+          <div class="p-3 mb-3">
+            <div class="d-flex justify-content-between">
+              <p class="fs-14 fw-600 text-5d5">Iphone 8</p>
+              <p class="fs-14 fw-400 text-f9a">2 Days ago</p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="fs-14 fw-600 text-5d5">Iphone 8</p>
+              <p class="fs-14 fw-400 text-f9a">2 Days ago</p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <p class="fs-14 fw-600 text-5d5">Iphone 8</p>
+              <p class="fs-14 fw-400 text-f9a">2 Days ago</p>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Add More Samples Modal -->
+
+<div class="modal fade" id="samples" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add More Samples</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="d-table-m" [formGroup]="addSamplesForm" autocomplete="off" (ngSubmit)="createSamples()">
+        <div class="modal-body">
+          <div class="p-3">
+                <div class="form-group">
+                  <label>Serial Number</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && s.serialNumber.errors }" 
+                  formControlName="serialNumber"
+                    placeholder="Serial Number"  type="text" />
+                  <div *ngIf="submitted && s.serialNumber.errors" class="invalid-feedback">
+                    <div *ngIf="s.serialNumber.errors.required">Purpose is required</div>
+                  </div>               
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="">
+            <button class="btn btn-orange fs-12 fw-600 mr-3" type="submit">Submit</button>
+            <button type="button" class="btn btn-transparent py-1" data-dismiss="modal">Close</button>
+          </div>
+          <div class="" hidden="">
+            <button class="btn btn-orange fs-12 fw-600 px-5 py-1" type="submit">
+              Please wait...</button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Edit Samples Modal -->
+
+<div class="modal fade" id="editsamplesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Edit Samples</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form class="d-table-m" [formGroup]="editSamplesForm" autocomplete="off" (ngSubmit)="editsamples()">
+          <div class="modal-body">
+            <div class="p-3">
+            
+                  <div class="form-group">
+                    <label>Serial Number</label>
+                    <input class="form-control" [ngClass]="{ 'is-invalid': submitted && h.serialNumber.errors }" 
+                    formControlName="serialNumber"
+                      placeholder="Serial Number"  type="text" />
+                    <div *ngIf="submitted && h.serialNumber.errors" class="invalid-feedback">
+                      <div *ngIf="h.serialNumber.errors.required">Serial Number is required</div>
+                    </div>               
+              </div>
+                <div class="form-group">
+                  <label>Product Received Date</label>
+                  <ng-datepicker [options]="options"  placeholder="Choose date" formControlName="receivedDate"></ng-datepicker>
+
+                  <!-- <input class="form-control" [ngClass]="{ 'is-invalid': submitted && h.receivedDate.errors }" 
+                  formControlName="receivedDate"
+                    placeholder="Received Date"  type="text" /> -->
+                  <div *ngIf="submitted && h.receivedDate.errors" class="invalid-feedback">
+                    <div *ngIf="h.receivedDate.errors.required">Purpose is required</div>
+                  </div>
+            </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="">
+              <button class="btn btn-orange fs-12 fw-600 mr-3" type="submit">Update</button>
+              <button type="button" class="btn btn-transparent py-1" data-dismiss="modal">Close</button>
+            </div>
+            <div class="" hidden="">
+              <button class="btn btn-orange fs-12 fw-600 px-5 py-1" type="submit">
+                Please wait...</button>
+            </div>
+          </div>
+        </form>
+  
+      </div>
+    </div>
+</div>
+
+
+  <!-- Add Links Modal -->
+
+<div class="modal fade" id="links" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Link / Document</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>  
+       
+        <!-- <form class="d-table-m" [formGroup]="addWatcherForm" autocomplete="off">
+          <div class="modal-body">
+            <div class="p-3">
+                <div class="form-group">
+                    <label>Watcher name</label>
+                    <select class="form-control" formControlName="user_id">
+                      <option value="0" selected disabled>Select Here</option>
+                      <option *ngFor="let items of watcherList" [value]="items.id">{{items.firstName}}</option>
+                    </select>
+                    <div *ngIf="submitted && f.user_id.errors" class="invalid-feedback">
+                      <div *ngIf="f.user_id.errors.required">Watcher is required</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Link</label>
+                    <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" formControlName="name"
+                      placeholder="Product name" name="" type="text" />
+                    <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                      <div *ngIf="f.name.errors.required">Purpose is required</div>
+                    </div>
+                  </div>
+            </div>
+          </div>  
+          <div class="modal-footer">
+            <div class="">
+              <button class="btn btn-orange fs-12 fw-600 mr-3" type="submit">Submit</button>
+              <button type="button" class="btn btn-transparent py-1" data-dismiss="modal">Close</button>  
+            </div>
+            <div class="" hidden="">
+              <button class="btn btn-orange fs-12 fw-600 px-5 py-1" type="submit">
+                Please wait...</button>
+            </div>
+          </div>
+        </form>  -->
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Add Docs Modal -->
+
+<div class="modal fade" id="docs" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Link / Document</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>  
+       
+        <!-- <form class="d-table-m" [formGroup]="addWatcherForm" autocomplete="off">
+          <div class="modal-body">
+            <div class="p-3">
+                <div class="form-group">
+                    <label>Watcher name</label>
+                    <select class="form-control" formControlName="user_id">
+                      <option value="0" selected disabled>Select Here</option>
+                      <option *ngFor="let items of watcherList" [value]="items.id">{{items.firstName}}</option>
+                    </select>
+                    <div *ngIf="submitted && f.user_id.errors" class="invalid-feedback">
+                      <div *ngIf="f.user_id.errors.required">Watcher is required</div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Link</label>
+                    <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" formControlName="name"
+                      placeholder="Product name" name="" type="text" />
+                    <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                      <div *ngIf="f.name.errors.required">Purpose is required</div>
+                    </div>
+                  </div>
+            </div>
+          </div>  
+          <div class="modal-footer">
+            <div class="">
+              <button class="btn btn-orange fs-12 fw-600 mr-3" type="submit">Submit</button>
+              <button type="button" class="btn btn-transparent py-1" data-dismiss="modal">Close</button>  
+            </div>
+            <div class="" hidden="">
+              <button class="btn btn-orange fs-12 fw-600 px-5 py-1" type="submit">
+                Please wait...</button>
+            </div>
+          </div>
+        </form>  -->
+      </div>
+    </div>
+  </div>
+
+  
+
+<!-- Add Watcher Modal -->
+
+<div class="modal fade" id="watcher" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Watcher</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+  
+        <form class="d-table-m" (ngSubmit)="addWatchers()" [formGroup]="addWatcherForm" autocomplete="off">
+          <div class="modal-body">
+            <div class="p-3">
+                  <div class="form-group">
+                    <label>Watcher name</label>
+                    <select class="form-control" formControlName="user_id">
+                      <option selected disabled>Select Here</option>
+                      <option *ngFor="let items of watcherList" [value]="items.id">{{items.firstName}}</option>
+                    </select>
+                    <div *ngIf="submitted && f.user_id.errors" class="invalid-feedback">
+                      <div *ngIf="f.user_id.errors.required">Watcher is required</div>
+                    </div>
+                  </div>
+            </div>
+          </div>  
+          <div class="modal-footer">
+            <div class="" [hidden]="loading">
+              <button class="btn btn-orange fs-12 fw-600 mr-3" type="submit">Submit</button>
+              <button type="button" class="btn btn-transparent py-1" data-dismiss="modal">Close</button>  
+            </div>
+            <div class="" [hidden]="!loading">
+              <button class="btn btn-orange fs-12 fw-600 px-5 py-1" type="submit">
+                Please wait...</button>
+            </div>
+          </div>
+        </form>  
+      </div>
+    </div>
+</div>

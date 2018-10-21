@@ -1,0 +1,168 @@
+<div class="container-fluid">
+  <div class="page-wrapper">
+    <p class="fs-14 fw-600 text-a5a mt-3 mb-3">Manufacturer List <span class="sprite-img s-down-arrow ml-3"></span></p>
+    <div class="d-flex justify-content-start">
+      <div class="mr-3">
+        <input type="text" [(ngModel)]="searchQuery" class="form-control" placeholder="Search Here">
+      </div>
+      <div>
+        <button class="btn btn-border text-f9a fs-14" data-toggle="modal" data-target="#exampleModal"><span class="fw-700 text-f9a">+</span> Create New</button>
+      </div>
+    </div>
+    <div class="pagination-container">
+      <div class="table-responsive bg-fff mt-3">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Mobile Number</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="5" *ngIf="(listManufacturer | search: searchQuery).length==0">
+                    <span *ngIf="!loading" >No records found!</span>
+                    <span *ngIf="loading">Loading...</span> 
+              </td>
+            </tr>
+            <tr *ngFor="let item of listManufacturer | search: searchQuery | paginate: { itemsPerPage: 6, currentPage: p }">
+              <td>{{item.name}}</td>
+              <td>{{item.email}}</td>
+              <td>{{item.address}}</td>
+              <td>{{item.phoneNo}}</td>
+              <td>
+                  <a class="cursor-pointer" data-toggle="modal" data-target="#exampleModalEdit" (click)="editData(item.id)"><i class="far fa-edit fs-18"></i></a>
+                  &nbsp;
+                  <a class="cursor-pointer" (click)="deleteItem(item.id)"><i class="far fa-trash-alt fs-18 text-danger"></i></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col align-self-end mt-3 pagination-top">
+        <pagination-controls class="float-right" (pageChange)="p = $event"></pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>
+  
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fs-18 text-f9a fw-600" id="exampleModalLabel">Create Manufacturer</h5> 
+        <button type="button" (click)="close()" class="close" data-dismiss="modal">
+          <span>&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="addForm" autocomplete="off" (ngSubmit)="create()">
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" formControlName="name" placeholder="Manufacturer" name="name" type="text" />
+                <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                    <div *ngIf="f.name.errors.required">Manufacturer is required</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" formControlName="email" placeholder="Type Email" name="email" type="text" />
+                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                    <div *ngIf="f.email.errors.required">Email is required</div>
+                    <div *ngIf="!f.email.errors.required">
+                      <div *ngIf="f.email.errors.email">Invalid Email</div>
+                    </div>
+                </div>
+              </div>
+            <div class="form-group">
+                <label>Address</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.address.errors }" formControlName="address" placeholder="Manufacturer Address" name="description" type="text" />
+                <div *ngIf="submitted && f.address.errors" class="invalid-feedback">
+                    <div *ngIf="f.address.errors.required">Address is required</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.phoneNo.errors }" formControlName="phoneNo" placeholder="Manufacturer Phone Number" name="description" type="text" />
+                <div *ngIf="submitted && f.phoneNo.errors" class="invalid-feedback">
+                    <div *ngIf="f.phoneNo.errors.required">Phone Number is required</div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <div class="" [hidden]="loading">
+              <!--<button type="button"  (click)="close()" class="btn btn-transparent" data-dismiss="modal">Close</button>
+                &nbsp;-->
+              <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Save</button>
+          </div>
+          <div class="" [hidden]="!loading">
+              <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Please wait...</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+  
+  <!-- edit modal starts here -->
+<div class="modal fade" id="exampleModalEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fs-18 text-f9a fw-600" id="exampleModalLabel">Update Manufacturer</h5>
+        <button type="button" (click)="close()" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="editForm" autocomplete="off" (ngSubmit)="update()">
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.name.errors }" formControlName="name" placeholder="Manufacturer" name="name" type="text" />
+                <div *ngIf="submitted && g.name.errors" class="invalid-feedback">
+                    <div *ngIf="g.name.errors.required">Manufacturer is required</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.email.errors }" formControlName="email" placeholder="Type Email" name="email" type="text" />
+                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                    <div *ngIf="g.email.errors.required">Email is required</div>
+                    <div *ngIf="!g.email.errors.required">
+                      <div *ngIf="g.email.errors.email">Invalid Email</div>
+                    </div>
+                </div>
+              </div>
+              <div class="form-group">
+                  <label>Address</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.address.errors }" formControlName="address" placeholder="Manufacturer Address" name="description" type="text" />
+                  <div *ngIf="submitted && g.address.errors" class="invalid-feedback">
+                      <div *ngIf="g.address.errors.required">Address is required</div>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label>Phone Number</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.phoneNo.errors }" formControlName="phoneNo" placeholder="Manufacturer Phone Number" name="description" type="text" />
+                  <div *ngIf="submitted && g.phoneNo.errors" class="invalid-feedback">
+                      <div *ngIf="g.phoneNo.errors.required">Phone Number is required</div>
+                  </div>
+              </div>
+        </div>
+        <div class="modal-footer">
+            <div class="" [hidden]="loading">
+                <!--<button type="button"  (click)="close()" class="btn btn-transparent" data-dismiss="modal">Close</button>
+                  &nbsp;-->
+                <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Update</button>
+            </div>
+            <div class="" [hidden]="!loading">
+                <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Please wait...</button>
+            </div>    
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

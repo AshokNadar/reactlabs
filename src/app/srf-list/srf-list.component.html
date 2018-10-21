@@ -1,0 +1,52 @@
+<div class="container-fluid">
+  <div class="page-wrapper">
+    <div class="d-flex justify-content-between mb-3">
+      <p class="fs-14 fw-600 text-a5a">SRF <span class="sprite-img s-down-arrow"></span></p>
+    </div>
+    <div class="d-flex justify-content-between">
+      <div class="">
+        <select class="form-control custom-select mb-2 fw-600 fs-14">
+          <option value="0">Filter</option>
+          <option value="1">Viewed Recently</option>
+          <option value="2">New Request</option>
+        </select>
+      </div>
+      <div class="">
+        <div class="pagination d-inline-block"></div>
+      </div>
+    </div>
+    <div class="pagination-container">
+      <div class="table-responsive bg-fff">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Product Type</th>
+              <th>Standard</th>
+              <th>Purpose</th>
+              <th>Description</th>
+              <th>Technical Spec</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>sdfsdf</td>
+              <td>sddfsdf</td>
+              <td>sdfsdf</td>
+              <td>
+                sdsfsdf
+              </td>
+              <td>dssdfsdf
+              </td>
+              <td>dfsdfdsf
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col align-self-end mt-3 pagination-top">
+        <pagination-controls class="float-right" (pageChange)="p = $event"></pagination-controls>
+      </div>
+    </div>
+  </div>
+</div>

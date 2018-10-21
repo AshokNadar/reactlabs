@@ -1,0 +1,147 @@
+<div class="container-fluid bg-fff box-shadow-1 position-relative z-index-0">
+  <div class="d-flex justify-content-start">
+    <a class="cursor-pointer" [routerLink]="['/home/srf/step-1/',manufacturerRequestsId]">
+      <div class="pt-3 mr-3 d-inline-block">
+        <span class="sprite-img s-back"></span>
+      </div>
+      <div class="pt-3 fs-16 fw-600 text-5d5 d-inline-block">
+        SRF Form
+      </div>
+    </a>
+    <div class="ml-5 pl-4">
+      <div class="step-top-container">
+        <div class="d-flex justify-content-start">
+          <div class="step-top fw-600">
+            1 Basic
+          </div>
+          <div class="step-top fw-600 active">
+            2 Product
+          </div>
+          <div class="step-top fw-600">
+            3 Declaration
+          </div>
+          <div class="step-top fw-600">
+            4 Summary
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="page-wrapper">
+      <div class="d-flex justify-content-between" *ngIf="!init">
+        <p class="fs-14 fw-600 text-a5a">Product <span class="sprite-img s-down-arrow"></span></p>
+        <div class="" *ngIf="viewAs == 0">
+          <div class="mb-2" [hidden]="loading">
+            <button routerLink="/home/my-application" class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Cancel</button>
+            <button [routerLink]="['/home/srf/step-1/',manufacturerRequestsId]" class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Back</button>
+            <button (click)="submitForm()" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Save & Next <span class="ml-3">></span></button>
+          </div>
+          <div class="mb-2" [hidden]="!loading">
+              <button (click)="submitForm()" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Please Wait... <span class="ml-3">></span></button>
+          </div>
+        </div>
+        <div class="" *ngIf="viewAs == 1">
+            <div class="mb-2" [hidden]="loading">
+                <button routerLink="/home/my-application"   class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Cancel</button>
+                <button [routerLink]="['/home/srf/step-1/',manufacturerRequestsId]" class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Back</button>
+                <button [routerLink]="['/home/srf/step-3/',manufacturerRequestsId]" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Next <span class="ml-3">></span></button>
+              </div>
+        </div>
+      </div>
+      <div class="card py-4 px-5 mb-3">
+        <p [hidden]="!init">Please Wait...</p> 
+        <form [formGroup]="addEditForm" *ngIf="!init">
+          <div formArrayName="products">
+          <div *ngFor="let item of addEditForm.controls.products.controls; let i=index" >
+            <div [formGroupName]="i" class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Product Category</label>
+                      <select class="form-control" formControlName="productCategory" name="productCategory">
+                          <option value="0" disabled selected>Select Product Category</option>
+                          <option *ngFor="let item of defaultData.step2.productCategory" [value]="item.id" >{{item.name}}</option>
+                      </select>
+                      <div *ngIf="submitted && IsValidField('productCategory',i)" class="invalid-feedback">
+                         Product Category is required
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>No. of samples</label>
+                      <select class="form-control" formControlName="noOfSamples" (change)="getSamples($event.target.value,i)">
+                        <option value="0" disabled selected="true">Select No of Samples</option>
+                        <option *ngFor="let item of array" [value]="item">{{item}}</option>
+                      </select>
+                      <div *ngIf="submitted && IsValidField('noOfSamples',i)" class="invalid-feedback">
+                        No. of samples is required
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Model Number</label>
+                      <input class="form-control mb-2" formControlName="modelNumber" placeholder="type model number" name="" type="text" />
+                      <div *ngIf="submitted && IsValidField('modelNumber',i)" class="invalid-feedback">
+                        Model Number is required
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Serial Number</label>
+                      <tag-input formControlName="serialNumber" [maxItems]="limitSet[i]" placeholder="Add Serial Number"></tag-input>
+                      <div *ngIf="submitted && IsValidField('serialNumber',i)" class="invalid-feedback">
+                        Serial Number is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Information Submitted</label>
+                      <div *ngIf="selectedInformation">
+                        <label *ngFor="let check of defaultData.step2.informationSubmittedType"  class="radio-container d-inline-block mr-4">
+                            {{check.name}}
+                            <input id="informationSubmittedId{{i}}" [checked]="checkChecked(i,check.id)" (click)="chooseInform(i,check.id)" [value]="check.id" type="checkbox">
+                            <span class="checkmark"></span>
+                        </label>
+                        <div *ngIf="submitted && IsValidField('informationSubmittedId',i)" class="invalid-feedback">
+                          Information Submitted is required
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Comments</label>
+                      <textarea rows="6" formControlName="comments" class="form-control" placeholder="type comments"></textarea>
+                      <div *ngIf="submitted && IsValidField('comments',i)" class="invalid-feedback">
+                        Comments is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>            
+            <button *ngIf="addEditForm.controls.products.controls.length > 1" class="btn btn-transparent" (click)="removeForm(i)">Remove</button>
+            <hr>
+          </div>
+          </div>
+        </form>
+      </div>
+      <div class="mb-3" *ngIf="!init">
+        <button (click)="addForm()" *ngIf="addEditForm.controls.products.controls.length <= 9" class="btn btn-block btn-dotter-b w-75 m-auto text-5d5 py-3">Add More Product <span class="sprite-img s-down-arrow ml-4"></span></button>
+      </div>
+      <div class="text-center">
+          <button class="btn btn-dotter-o text-f9a py-2 px-4 mt-4 fs-12 text-wrap">Additional components maybe requested by the Lab after examination of the schematics for abnormal testing.</button>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="container-fluid bg-fff py-3 border-b-1 position-relative z-index-1">
+  <div class="d-flex justify-content-between">
+    <div class="logo">
+      <a href="#"><img class="vertical-t" src="/assets/images/logo.png" alt=""> <span class="text-333 fw-700 fs-18 ml-3">React Labs</span></a>
+    </div>
+    <div class="header-right">
+      <div class="text-5d5 d-inline-block header-profile dropdown user-info">
+        <div class="dropdown-toggle pr-3 cursor-pointer" data-toggle="dropdown"><img class="mr-2" src="/assets/images/avatar.png" alt="Profile Image" />
+        <span class="">{{ userName || "Jane Doe"}}</span></div>
+        <div class="dropdown-menu dropdown-menu-right">            
+          <a class="dropdown-item fs-14" routerLink="/home/profile"><i class="fas fa-user mr-2"></i> My Profile</a>
+          <a class="dropdown-item fs-14" routerLink="/home/change-password"><i class="fas fa-cogs mr-2"></i> Change Password</a>
+          <a class="dropdown-item fs-14" routerLink="/login" ><i class="fas fa-sign-out-alt mr-2"></i> Logout</a>
+        </div>
+      </div>
+      <!-- <div class="d-inline-block ml-3"><span class="sprite-img s-notification"></span></div> -->
+    </div>
+  </div>
+</div>
+<div class="container-fluid bg-fff py-3 box-shadow-1 position-relative z-index-0 header-menu">
+  <ul class="header-nav px-4">
+    <li class="d-inline-block mr-5 py-2"><a class="fs-16" routerLinkActive="activeMenu" routerLink="/home/dashboard"><span class="sprite-img s-dashboard mr-2 vertical-t"></span> Dashboard</a></li>
+    <li class="d-inline-block mr-5 py-2" *ngIf="roleId == 1 || roleId == 4"><a class="fs-16" routerLinkActive="activeMenu" routerLink="/home/my-application"><span class="sprite-img s-application mr-2 vertical-t"></span> Application Request</a></li>
+    <!-- <li class="d-inline-block mr-5 py-2"><a class="fs-16" routerLinkActive="activeMenu" routerLink="/home/srf-list"><span class="sprite-img s-project mr-2 vertical-t"></span> SRF</a></li> -->
+    <li class="d-inline-block mr-5 py-2"><a class="fs-16" routerLinkActive="activeMenu" routerLink="/home/projects"><span class="sprite-img s-project mr-2 vertical-t"></span> Projects</a></li>
+    <li class="d-inline-block mr-5 py-2" *ngIf="roleId == 1"><a class="fs-16" routerLinkActive="activeMenu" routerLink="/home/master"><span class="sprite-img s-setting mr-2 vertical-t"></span> Settings</a></li>
+    <li class="d-inline-block mr-5 py-2"><a class="fs-16" routerLinkActive="activeMenu" routerLink="/home/support"><span class="sprite-img s-support mr-2 vertical-t"></span> Support</a></li>
+  </ul>
+</div>

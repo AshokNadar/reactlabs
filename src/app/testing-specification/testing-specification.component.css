@@ -1,0 +1,8 @@
+select.form-control {
+    font-size: 1rem;
+    color: #495057;
+}
+.selectStatus, .selectChangepassword{
+    background: #f9aa33;
+    color: #fff;
+}

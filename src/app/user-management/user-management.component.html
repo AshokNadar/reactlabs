@@ -1,0 +1,307 @@
+<div class="container-fluid">
+  <div class="page-wrapper pb-2 px-0">
+    <div class="d-flex align-items-center justify-content-between">
+      <p class="fs-14 fw-600 text-a5a mb-3">Users<span class="sprite-img s-down-arrow ml-3"></span></p>
+      <button class="btn btn-border text-f9a fs-14 mb-2" routerLink="/home/master"><span class="fw-700 text-f9a"><</span>
+                    Back to settings</button>
+    </div>
+
+    <div class="pagination-container">
+      <div class="row">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-start">
+                <div class="mr-3">
+                  <input type="text" [(ngModel)]="searchQuery" class="form-control" placeholder="Search Here">
+                </div>
+                <div>
+                    <button class="btn btn-border text-f9a fs-14" data-keyboard="false" data-backdrop="static" data-toggle="modal"
+                    data-target="#createUserModal"><span class="fw-700 text-f9a">+</span>
+                    Create User</button>
+                </div>
+              </div>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex justify-content-end mb-2">    
+               
+                  <pagination-controls (pageChange)="p = $event"></pagination-controls>         
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive bg-fff">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>LastName</th>
+              <th>Display Name</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Role Name</th>
+              <th>status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="10" *ngIf="listusers.length==0">
+                <span *ngIf="!loading">No records found!</span>
+                <span *ngIf="loading">Loading...</span>
+              </td>
+            </tr>
+            <tr *ngFor="let item of listusers | search: searchQuery  | paginate: { itemsPerPage: 7, currentPage: p }">
+              <td>{{item.firstName}}</td>
+              <td>{{item.lastName}}</td>
+              <td>{{item.displayName}}</td>
+              <td>{{item.email}}</td>
+              <td>{{item.mobile}}</td>
+              <td>{{item.roles.name}}</td>
+              <td>
+                <span class="active" *ngIf="item.status == 1">Active</span>
+                <span class="inactive" *ngIf="item.status == 0">Inactive</span>
+              </td>
+              <td>
+                <a class="cursor-pointer mr-3" data-toggle="modal" data-keyboard="false" data-backdrop="static"
+                  data-target="#editUserModal" (click)="edituser(item.id)"><i class="far fa-edit fs-18"></i></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create User starts here -->
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Create User</h5>
+        <button type="button" (click)="close()" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="createUser" autocomplete="off" (ngSubmit)="create()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>First Name</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }"
+                  formControlName="firstName" placeholder="First Name" name="name" type="text" />
+                <div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">
+                  <div *ngIf="f.firstName.errors.required">First name is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Last Name</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }"
+                  formControlName="lastName" placeholder="Last Name" name="name" type="text" />
+                <div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">
+                  <div *ngIf="f.lastName.errors.required">Last name is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Display Name</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.displayName.errors }"
+                  formControlName="displayName" placeholder="Display Name" name="name" type="text" />
+                <div *ngIf="submitted && f.displayName.errors" class="invalid-feedback">
+                  <div *ngIf="f.displayName.errors.required">Dispaly name is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Mobile </label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.mobile.errors }" formControlName="mobile"
+                  placeholder="mobile " name="name" type="number" />
+                <div *ngIf="submitted && f.mobile.errors" class="invalid-feedback">
+                  <div *ngIf="f.mobile.errors.required">Mobile number is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Email</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" formControlName="email"
+                  placeholder="Email" name="name" type="email" />
+                <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                  <div *ngIf="f.email.errors.required">Email is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>isdCode </label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.isdCode.errors }" formControlName="isdCode"
+                  placeholder="isdCode " name="name" type="text" />
+                <div *ngIf="submitted && f.isdCode.errors" class="invalid-feedback">
+                  <div *ngIf="f.isdCode.errors.required">isdCode is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Role Name </label>
+                <select class="form-control" formControlName="roleId" [ngClass]="{ 'is-invalid': submitted && f.roleId.errors }">
+                  <option value="0" selected disabled>--Please select the role--</option>
+                  <option *ngFor="let item of roleslist" [value]="item.id">{{item.name}}</option>
+                </select>
+                <div *ngIf="submitted && f.roleId.errors" class="invalid-feedback">
+                  <div *ngIf="f.roleId.errors.required">Role is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label class="w-100">Mandatory Change Password</label>
+                <button type="button" class="btn py-1 mr-2" (click)="changePassword(mandatoryChangePassword)" [ngClass]="{selectChangepassword:mandatoryChangePassword == 1}">Yes</button>
+                <button type="button" class="btn py-1" (click)="changePassword(mandatoryChangePassword)" [ngClass]="{selectChangepassword:mandatoryChangePassword == 0}">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="" [hidden]="loading">
+
+            <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Create</button>
+            &nbsp;
+            <button type="button" (click)="close()" class="btn btn-border fs-12 fw-600 px-5 py-1" data-dismiss="modal">Close</button>
+
+          </div>
+          <div class="" [hidden]="!loading">
+            <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Please wait...</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Edit User starts here -->
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update User</h5>
+        <button type="button" (click)="close()" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="editUserForm" autocomplete="off" (ngSubmit)="edit()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>First Name</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.firstName.errors }"
+                  formControlName="firstName" placeholder="First Name" name="name" type="text" />
+                <div *ngIf="submitted && g.firstName.errors" class="invalid-feedback">
+                  <div *ngIf="g.firstName.errors.required">First name is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Last Name</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.lastName.errors }"
+                  formControlName="lastName" placeholder="Last Name" name="name" type="text" />
+                <div *ngIf="submitted && g.lastName.errors" class="invalid-feedback">
+                  <div *ngIf="g.lastName.errors.required">Last name is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Display Name</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.displayName.errors }"
+                  formControlName="displayName" placeholder="Display Name" name="name" type="text" />
+                <div *ngIf="submitted && g.displayName.errors" class="invalid-feedback">
+                  <div *ngIf="g.displayName.errors.required">Dispaly name is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Mobile </label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.mobile.errors }" formControlName="mobile"
+                  placeholder="mobile " name="name" type="number" />
+                <div *ngIf="submitted && g.mobile.errors" class="invalid-feedback">
+                  <div *ngIf="g.mobile.errors.required">Mobile number is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Email</label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.email.errors }" formControlName="email"
+                  placeholder="Email" name="name" type="email" />
+                <div *ngIf="submitted && g.email.errors" class="invalid-feedback">
+                  <div *ngIf="g.email.errors.required">Email is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>isdCode </label>
+                <input class="form-control" [ngClass]="{ 'is-invalid': submitted && g.isdCode.errors }" formControlName="isdCode"
+                  placeholder="isdCode " name="name" type="text" />
+                <div *ngIf="submitted && g.isdCode.errors" class="invalid-feedback">
+                  <div *ngIf="g.isdCode.errors.required">ISDCode is required</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Role Name </label>
+                <select class="form-control" formControlName="roleId" [ngClass]="{ 'is-invalid': submitted && g.roleId.errors }">
+                  <option selected disabled>--Please select the role--</option>
+                  <option *ngFor="let item of roleslist" [value]="item.id">{{item.name}}</option>
+                </select>
+                <div *ngIf="submitted && g.roleId.errors" class="invalid-feedback">
+                  <div *ngIf="g.roleId.errors.required">Role is required</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label class="w-100">Mandatory Change Password</label>
+                <button type="button" class="btn py-1 mr-2" (click)="updateChangePassword(mandatoryChangePassword)"
+                  [ngClass]="{selectChangepassword:mandatoryChangePassword == 1}">Yes</button>
+                <button type="button" class="btn py-1" (click)="updateChangePassword(mandatoryChangePassword)"
+                  [ngClass]="{selectChangepassword:mandatoryChangePassword == 0}">No</button>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label class="w-100">User Status</label>
+                <button type="button" class="btn py-1 mr-3" (click)="changeStatus(status)" [ngClass]="{selectStatus:status == 1}">Active</button>
+                <button type="button" class="btn py-1" (click)="changeStatus(status)" [ngClass]="{selectStatus:status == 0}">Inactive</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="" [hidden]="loading">
+            <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Update</button> &nbsp;
+            <button type="button" (click)="close()" class="btn btn-border fs-12 fw-600 px-5 py-1" data-dismiss="modal">Close</button>
+
+
+          </div>
+          <div class="" [hidden]="!loading">
+            <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Please wait...</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

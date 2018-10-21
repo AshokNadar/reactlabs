@@ -1,0 +1,314 @@
+<div class="container-fluid">
+  <div class="page-wrapper">
+    <div class="d-flex justify-content-between mb-3">
+      <p class="fs-14 fw-600 text-a5a">Application Requests <span class="sprite-img s-down-arrow"></span></p>
+      <button *ngIf="userId == 4" class="btn btn-border text-f9a fs-14" data-toggle="modal" data-target="#createModal"><span class="fw-700 text-f9a">+</span> New Request</button>
+    </div>
+    <div class="d-flex justify-content-between">
+      <div class="">
+        <select class="form-control custom-select mb-2 fw-600 fs-14">
+          <option value="0">Filter</option>
+          <option value="1">Viewed Recently</option>
+          <option value="2">New Request</option>
+        </select>
+      </div>
+      <div class="">
+        <div class="pagination d-inline-block">
+            <pagination-controls class="float-right" (pageChange)="p = $event"></pagination-controls>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive bg-fff">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Product Type</th>
+            <th>Standard</th>
+            <th>Purpose</th>
+            <th>Description</th>
+            <th>Company</th>
+            <th>Created Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="6" *ngIf="(dataList | search: searchQuery).length==0">
+                  <span *ngIf="!loading" >No records found!</span>
+                  <span *ngIf="loading">Loading...</span> 
+            </td>
+          </tr>
+          <tr *ngFor="let item of dataList | search: searchQuery | paginate: { itemsPerPage: 6, currentPage: p }">
+            <td>{{item.name}}</td>
+            <td>{{item.ProductType.name}}</td>
+            <td>{{item.TestingStandard.name}}</td>
+            <td>{{item.purpose}}</td>
+            <td>
+              <div class="d-flex justify-content-between">
+                <div>Description</div>
+                <div class="ml-2">
+                    <a href="javascript:void(0);" title="{{item.description}}" data-toggle="popover" data-trigger="focus"
+                    data-content="Click anywhere in the document to close this popover"><span class="sprite-img s-info"></span></a>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex justify-content-between">
+                <div>{{item.company}}</div>
+              </div>
+            </td>
+            <td>{{item.createdAt | date: 'dd MMM yyyy'}}</td>
+            <td class="text-capitalize">
+              {{item.statusInfo.name}}
+            </td>
+            <td>
+              <div *ngIf="userId == 1">
+                <a class="cursor-pointer mb-2 mr-3 d-inline-block" data-toggle="modal" *ngIf="item.statusInfo.id == 1"  data-target="#updateModal" (click)="editData(item.id)"><i class="far fa-edit fs-18"></i></a>
+                <a data-toggle="modal"  data-keyboard="false" data-backdrop="static" data-target="#commentModal" *ngIf="item.statusInfo.id == 1"  (click)="chooseStatus(item.id,2)"  href=""><span class="sprite-img s-approved1 mr-4"></span></a>
+                <span class="sprite-img s-approved2 mr-4" *ngIf="item.statusInfo.id == 2  && item.srf && item.srf.statusInfo.id != 3 && item.srf.statusInfo.id != 4"></span>
+                <span class="sprite-img s-rejected1 mr-4" *ngIf="item.statusInfo.id == 3"></span>
+                <a data-toggle="modal"  data-keyboard="false" data-backdrop="static" data-target="#commentModal" *ngIf="item.statusInfo.id == 1"  (click)="chooseStatus(item.id,3)"  href=""><span class="sprite-img s-rejected2 mr-4"></span></a>
+                <div *ngIf="item.srf && item.srf.statusInfo.id == 4">
+                    <button class="btn btn-dotter-o fs-12 mr-3 d-inline-block fw-600 py-1 px-2">SRF Approved <span class="ml-3">></span></button>
+                </div>
+                <div *ngIf="item.srf && item.srf.statusInfo.id == 3">
+                  <button class="btn btn-dotter-o fs-12 mr-3 d-inline-block fw-600 py-1 px-2">SRF Submitted <span class="ml-3">></span></button>
+                  <a href="javascript:void(0)" (click)="srfState(item.srf.id,4)" title="Approve SRF" data-toggle="modal" data-target="#approveModal" ><i class="fa fa-check fs-18 text-success" aria-hidden="true"></i></a>
+                  &nbsp;
+                  <a title="View SRF" (click)="saveView();saveSrf(item.srf)" [routerLink]="['/home/srf/step-1',item.id]"><i class="fa fa-eye fs-18 text-f9a" aria-hidden="true"></i></a>
+                  &nbsp;
+                </div>
+              </div>
+              <div *ngIf="userId == 4">
+                  <p *ngIf="item.statusInfo.id == 1 || item.statusInfo.id == 3">
+                    -
+                  </p>
+                  <div *ngIf="item.srf && item.srf.statusInfo.id == 4">
+                      <button class="btn btn-dotter-o fs-12 mr-3 d-inline-block fw-600 py-1 px-2">SRF Approved <span class="ml-3">></span></button>
+                  </div>
+                  <button  *ngIf="!item.srf && item.statusInfo.id != 1 && item.statusInfo.id != 3 && item.statusInfo.id != 4" [routerLink]="['/home/srf/step-1',item.id]"  class="btn btn-dotter-o fs-12 mr-3 d-inline-block mb-2 fw-600 py-1 px-2">Apply <span class="ml-3">></span></button>
+                  <button *ngIf="item.srf && item.srf.statusInfo.id != 3 && item.srf.statusInfo.id != 4" (click)="saveSrf(item.srf)" [routerLink]="['/home/srf/step-1',item.id]" class="btn btn-dotter-o fs-12 mr-3 d-inline-block fw-600 py-1 px-2">Draft <span class="ml-3">></span></button>
+                  <div *ngIf="item.srf && item.srf.statusInfo.id == 3 && item.srf.statusInfo.id == 4">
+                    <button (click)="saveSrf(item.srf)" class="btn btn-dotter-o fs-12 mr-3 d-inline-block fw-600 py-1 px-2">SRF Submitted <span class="ml-3">></span></button>
+                    <a (click)="saveView();saveSrf(item.srf)" [routerLink]="['/home/srf/step-1',item.id]"><i class="fa fa-eye fs-18" aria-hidden="true"></i></a>
+                    &nbsp;
+                    <a href="" download="" target="_blank"><i class="fa fa-download fs-18" aria-hidden="true"></i></a>
+                    &nbsp;
+                    <a [hidden]="uploadLoading[item.id]" class="file-upload-container cursor-pointer">
+                      <i class="fa fa-upload fs-18" aria-hidden="true"></i>
+                      <input type="file" class="cursor-pointer" (change)="readUpload(item.id,item.srf.id,$event)">
+                    </a>
+                    <a [hidden]="!uploadLoading[item.id]">
+                      <img src="/assets/images/spin.gif" width="18" height="18" alt="Loading" />
+                    </a>
+                  </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="approveModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fs-18 text-f9a fw-600" id="createModalLabel">Approve SRF Request <span class="sprite-img s-down-arrow ml-3"></span></h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>×</span>
+          </button>
+        </div>
+        <form class="d-table-m p-4" autocomplete="off">
+          <div class="px-3">
+            <div class="mt-2">
+                <div class="" [hidden]="loading">
+                    <button type="submit" (click)="approveSRF()" class="btn btn-border" >Yes</button> &nbsp;
+                    <button type="button" class="btn btn-transparent" data-dismiss="modal">No</button>
+                     
+                </div>
+                <div class="" [hidden]="!loading">
+                    <button type="submit" class="btn btn-border">Please wait...</button>
+                </div>  
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fs-18 text-f9a fw-600" id="createModalLabel">Update New Request <span class="sprite-img s-down-arrow ml-3"></span></h5>
+        <button type="button" (click)="close()" class="close" data-dismiss="modal">
+          <span>×</span>
+        </button>
+      </div>
+      <form class="d-table-m p-4" (ngSubmit)="update()" [formGroup]="editForm" autocomplete="off">
+        <div class="px-3 mb-3">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Type</label>
+                <select class="form-control" formControlName="productTypeId" name="type">
+                  <option value="0" selected disabled>Select product type</option>
+                  <option *ngFor="let item of productList" [value]="item.id"> {{item.name}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="submitted && !editForm.controls['productTypeId'].valid">Product Type is required</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Standard</label>
+                <select class="form-control" formControlName="testingStandardId" name="standard">
+                  <option value="0" selected disabled>Select standard</option>
+                  <option *ngFor="let item of standardList" [value]="item.id"> {{item.name}}</option>
+                </select>
+                <div class="invalid-feedback" *ngIf="submitted && !editForm.controls['testingStandardId'].valid">Testing Standard is required</div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Description</label>
+                <input class="form-control" formControlName="description" placeholder="Type Description" name="description" />
+                <div class="invalid-feedback" *ngIf="submitted && !editForm.controls['description'].valid">Description is required</div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Product Name</label>
+                <input class="form-control" formControlName="productName"   placeholder="Product name" name="productName" type="text" />
+                <div class="invalid-feedback" *ngIf="submitted && !editForm.controls['productName'].valid">Product Name is required</div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group">
+                <label>Purpose</label>
+                <input class="form-control" formControlName="purpose"  placeholder="Type Purpose" name="purpose" type="text" />
+                <div class="invalid-feedback" *ngIf="submitted && !editForm.controls['purpose'].valid">Purpose is required</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="px-3">
+          <div class="mt-2">
+              <div class="" [hidden]="loading">
+                  <button type="submit" class="btn btn-border" >Update</button> &nbsp;
+                  <button type="button"  (click)="close()" class="btn btn-transparent" data-dismiss="modal">Close</button>
+                   
+              </div>
+              <div class="" [hidden]="!loading">
+                  <button type="submit" class="btn btn-border">Please wait...</button>
+              </div>  
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fs-18 text-f9a fw-600" id="createModalLabel">Add New Request <span class="sprite-img s-down-arrow ml-3"></span></h5>
+          <button type="button" (click)="close()" class="close" data-dismiss="modal">
+            <span>×</span>
+          </button>
+        </div>
+        <form class="d-table-m p-4" (ngSubmit)="submitForm()" [formGroup]="createRequest" autocomplete="off">
+          <div class="px-3 mb-3">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Type</label>
+                  <select class="form-control" formControlName="productTypeId" name="type">
+                    <option value="0" selected disabled>Select product type</option>
+                    <option *ngFor="let item of productList" [value]="item.id"> {{item.name}}</option>
+                  </select>
+                  <div class="invalid-feedback" *ngIf="submitted && !createRequest.controls['productTypeId'].valid">Product Type is required</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Standard</label>
+                  <select class="form-control" formControlName="testingStandardId" name="standard">
+                    <option value="0" selected disabled>Select standard</option>
+                    <option *ngFor="let item of standardList" [value]="item.id"> {{item.name}}</option>
+                  </select>
+                  <div class="invalid-feedback" *ngIf="submitted && !createRequest.controls['testingStandardId'].valid">Testing Standard is required</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Description</label>
+                  <input class="form-control" formControlName="description" placeholder="Type Description" name="description" />
+                  <div class="invalid-feedback" *ngIf="submitted && !createRequest.controls['description'].valid">Description is required</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Product Name</label>
+                  <input class="form-control" formControlName="productName"   placeholder="Product name" name="productName" type="text" />
+                  <div class="invalid-feedback" *ngIf="submitted && !createRequest.controls['productName'].valid">Product Name is required</div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Purpose</label>
+                  <input class="form-control" formControlName="purpose"  placeholder="Type Purpose" name="purpose" type="text" />
+                  <div class="invalid-feedback" *ngIf="submitted && !createRequest.controls['purpose'].valid">Purpose is required</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-3">
+            <div class="mt-2">
+                <div class="" [hidden]="loading">
+                    <button type="submit" class="btn btn-border">Add</button> &nbsp;
+                    <button type="button"  (click)="close()" class="btn btn-transparent" data-dismiss="modal">Close</button>
+                     
+                </div>
+                <div class="" [hidden]="!loading">
+                    <button type="submit" class="btn btn-border">Please wait...</button>
+                </div>  
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fs-18 text-f9a fw-600" id="commentModalLabel">Add Comment <span class="sprite-img s-down-arrow ml-3"></span></h5>
+        <button type="button" class="close" data-dismiss="modal">
+          <span>×</span>
+        </button>
+      </div>
+      <form class="d-table-m p-4" (ngSubmit)="changeStatus()" autocomplete="off" [formGroup]="statusFrom">
+        <div class="px-3 mb-3">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label>Comment</label>
+                <textarea fromControlName="comments" class="form-control" rows="4"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="px-3">
+          <div class="mt-2" [hidden]="loading">
+            <button type="submit" class="btn btn-orange fs-12 fw-600 px-5 py-1">Add Comment</button>
+          </div>
+          <div class="mt-2" [hidden]="!loading">
+              <button type="submit" class="btn btn-border">Please wait...</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

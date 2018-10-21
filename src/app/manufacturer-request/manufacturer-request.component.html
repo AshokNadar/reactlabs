@@ -1,0 +1,190 @@
+<div class="container-fluid bg-f9a register-padding h-100vh">
+  <div class="row h-100">
+    <div class="col-md-6 h-100 d-table register-left">
+      <div class="d-table-m p-4">
+        <div class="register-logo fs-18 text-f9a fw-700 mb-5"><img class="mr-2" src="assets/images/logo.png" alt="" /> React Labs</div>
+        <h2 class="fw-700 text-fff fs-40">Submit Request using<br/> the form. <span class="sprite-img s-right-arrow"></span></h2>
+        <div class="p-5 border-l-1-fff mb-3"></div>
+        <div class="mb-5">
+          <button routerLink="/login" class="btn btn-light py-1 px-2 fs-14 text-5d5 fw-700">Already a user <span class="pl-5">></span></button>
+        </div>
+        <ul class="fs-12">
+          <li class="d-inline mr-5"><a class="text-f9a" routerLink="/support">Support</a></li>
+          <li class="d-inline mr-5"><a class="text-f9a" routerLink="/policy">Policy</a></li>
+          <li class="d-inline mr-5"><a class="text-f9a" routerLink="/services">Services</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6 bg-fff h-100 d-table">
+      <div class="d-table-m p-4">
+        <form name="" (ngSubmit)="submitRequest()" [formGroup]="registerForm" autocomplete="off">
+          <h4 class="fs-14 fw-600 text-a5a">Product <span class="sprite-img s-down-arrow"></span></h4>
+          <div class="px-3 mb-3">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Type</label>
+                  <select  [ngClass]="{ 'is-invalid': submitted && f.productTypeId.errors }" class="form-control" formControlName="productTypeId" name="type">
+                    <option value="0" selected disabled>Select product type</option>
+                    <option *ngFor="let items of productList" [value]="items.id">{{items.name}}</option>
+                  </select>
+                  <div *ngIf="submitted && f.productTypeId.errors" class="invalid-feedback">
+                      <div *ngIf="f.productTypeId.errors.required">Product type is required</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Standard</label>
+                  <select class="form-control" [ngClass]="{ 'is-invalid': submitted && f.testingStandardId.errors }"  formControlName="testingStandardId" name="standard">
+                    <option value="0" selected disabled>Select standard</option>
+                    <option *ngFor="let items of standardList" [value]="items.id">{{items.name}}</option>
+                  </select>
+                  <div *ngIf="submitted && f.testingStandardId.errors" class="invalid-feedback">
+                      <div *ngIf="f.testingStandardId.errors.required">Standard is required</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Description</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.description.errors }"  formControlName="description" placeholder="Type Description" name="description"/>
+                  <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+                      <div *ngIf="f.description.errors.required">Description is required</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Product Name</label>
+                  <input class="form-control"  [ngClass]="{ 'is-invalid': submitted && f.productName.errors }" formControlName="productName" placeholder="Product name" name="productName" type="text" />
+                  <div *ngIf="submitted && f.productName.errors" class="invalid-feedback">
+                      <div *ngIf="f.productName.errors.required">Product name is required</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Purpose</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.purpose.errors }"  formControlName="purpose" placeholder="Type Purpose" name="purpose" type="text" />                  
+                  <div *ngIf="submitted && f.purpose.errors" class="invalid-feedback">
+                      <div *ngIf="f.purpose.errors.required">Purpose is required</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h4 class="fs-14 fw-600 text-a5a">Personal <span class="sprite-img s-down-arrow"></span></h4>
+          <div class="px-3">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Name</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.name.errors }" formControlName="name" placeholder="Type your name" name="name" type="text" />
+                  <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                      <div *ngIf="f.name.errors.required">Name is required</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Email</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }"  formControlName="email" placeholder="Type your email" name="email" type="text" />
+                  <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                      <div *ngIf="f.email.errors.required">Email is required</div>
+                      <div *ngIf="!f.email.errors.required">
+                        <div *ngIf="f.email.errors.email">Invalid Email</div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Contact</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.contact.errors }"  formControlName="contact" placeholder="Type contact" name="contact" type="text" />
+                  <div *ngIf="submitted && f.contact.errors" class="invalid-feedback">
+                      <div *ngIf="f.contact.errors.required">Contact is required</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label>Company Name</label>
+                  <input class="form-control" [ngClass]="{ 'is-invalid': submitted && f.company.errors }"  formControlName="company" placeholder="Type your company name" name="company" type="text" />
+                  <div *ngIf="submitted && f.company.errors" class="invalid-feedback">
+                      <div *ngIf="f.company.errors.required">Company is required</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4">
+                <div class="" [hidden]="loading">
+                  <button type="submit" class="btn btn-dark py-1 px-2 fs-14 text-fff fw-700">Send Request <span class="pl-5">></span></button>
+                </div>
+                <div class="" [hidden]="!loading">
+                    <button type="submit" class="btn btn-dark py-1 px-2 fs-14 text-fff fw-700">Please Waait <span class="pl-5">></span></button>
+                </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="registereModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-700 text-center text-5d5 w-100" id="registerModalLabel">Thanks for submitting request with <span class="text-f9a">React Labs</span></h5>
+        <button type="button" class="modal-abs-close close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-4"><img src="/assets/images/support.png" alt="" /></div>
+        <p class="fs-14 fw-600 text-5d5 text-center">We will contact you within 48 hrs</p>
+        <div class="py-2 px-3 border-dotted-f9a text-center w-75 m-auto">For assistance call <span class="fs-16 text-f9a">1234567890</span> or Email at <span class="fs-16 text-f9a">support@gmail.com</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <button type="button" class="modal-abs-close close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="d-table h-100">
+              <div class="d-table-m">
+                <p class="text-5d5 fw-700">Already a user.<br/>
+                  <span class="text-f9a">Login Here...</span>
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <!-- <form name="" autocomplete="off"> -->
+              <div class="form-group">
+                <label>Email</label>
+                <input class="form-control" placeholder="Type Email" name="email" type="text" />
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input class="form-control" placeholder="Type password" name="password" type="password" />
+              </div>
+              <div class="mt-3">
+                <button class="btn btn-border text-5d5 py-1 px-3 fs-14" type="submit">Submit <span class="pl-4">></span></button>
+              </div>
+              <p class="mb-0 mt-3"><a class="text-f9a fw-700" routerLink="">Forgot password</a></p>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

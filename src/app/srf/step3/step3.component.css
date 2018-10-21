@@ -1,0 +1,6 @@
+.form-control.dashed-b-control:disabled{
+    background:transparent;
+}
+.invalid-feedback{
+    display: block !important;
+}

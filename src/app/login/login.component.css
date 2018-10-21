@@ -1,0 +1,9 @@
+.register-left{
+    background: url("/assets/images/register-image.jpg") no-repeat center center / cover;
+}
+.register-padding{
+    padding:15px 100px;
+}
+.invalid-feedback{
+    display: block;
+}

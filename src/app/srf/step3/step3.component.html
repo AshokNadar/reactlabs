@@ -1,0 +1,128 @@
+<div class="container-fluid bg-fff box-shadow-1 position-relative z-index-0">
+  <div class="d-flex justify-content-start">
+    <a class="cursor-pointer" [routerLink]="['/home/srf/step-2/',manufacturerRequestsId]">
+      <div class="pt-3 mr-3 d-inline-block">
+        <span class="sprite-img s-back"></span>
+      </div>
+      <div class="pt-3 fs-16 fw-600 text-5d5 d-inline-block">
+        SRF Form
+      </div>
+    </a>
+    <div class="ml-5 pl-4">
+      <div class="step-top-container">
+        <div class="d-flex justify-content-start">
+          <div class="step-top fw-600">
+            1 Basic
+          </div>
+          <div class="step-top fw-600">
+            2 Product
+          </div>
+          <div class="step-top fw-600 active">
+            3 Declaration
+          </div>
+          <div class="step-top fw-600">
+            4 Summary
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="page-wrapper">
+    <form [formGroup]="addEditForm">
+      <div class="d-flex justify-content-between" *ngIf="!init">
+          <p class="fs-14 fw-600 text-a5a">Declaration by Customer  <span class="sprite-img s-down-arrow"></span></p>
+          <div class="" *ngIf="viewAs == 0">
+            <div class="mb-2" [hidden]="loading">
+              <button routerLink="/home/my-application" class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Cancel</button>
+              <button [routerLink]="['/home/srf/step-2/',manufacturerRequestsId]" class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Back</button>
+              <button (click)="submitForm()" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Save & Next <span class="ml-3">></span></button>
+            </div>
+            <div class="mb-2" [hidden]="!loading">
+                <button (click)="submitForm()" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Please Wait... <span class="ml-3">></span></button>
+            </div>
+          </div>
+          <div class="" *ngIf="viewAs == 1">
+              <div class="mb-2" [hidden]="loading">
+                  <button routerLink="/home/my-application"   class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Cancel</button>
+                  <button [routerLink]="['/home/srf/step-2/',manufacturerRequestsId]" class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Back</button>
+                  <button [routerLink]="['/home/srf/step-4/',manufacturerRequestsId]" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Next <span class="ml-3">></span></button>
+                </div>
+          </div>
+      </div>
+      <div class="card p-4 text-center mb-3">
+        <p [hidden]="!init">Please Wait...</p> 
+        <div class="row text-left" *ngIf="!init">
+          <div class="col-md-6" *ngFor="let list of declarationList">
+            <div class="form-group">
+              <label class="radio-container d-block">{{list.name}}
+                <input [value]="list.id" [formControlName]="list.fieldName" id="{{list.fieldName}}"  type="checkbox">
+                <span class="checkmark"></span>
+              </label> 
+              <div class="invalid-feedback text-capitalize" *ngIf="submitted && !addEditForm.controls[list.fieldName].valid">{{insertSpaces(list.fieldName)}} is required</div>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="!init">
+          <div class="col-md-3 col-sm-6">
+            <div class="form-group">
+              <label>Name</label>
+              <input class="form-control mb-2" formControlName="name" placeholder="Type name" name="" type="text" />
+              <div class="invalid-feedback text-capitalize" *ngIf="submitted && !addEditForm.controls['name'].valid">Name is required</div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="form-group">
+              <label>Date</label>
+              <ng-datepicker [options]="options"  placeholder="Choose date" formControlName="date"></ng-datepicker>
+              <!-- <input class="form-control mb-2" placeholder="Type date" name="" type="text" /> -->
+              <div class="invalid-feedback text-capitalize" *ngIf="submitted && !addEditForm.controls['date'].valid">Name is required</div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="form-group">
+              <label>Designation</label>
+              <input class="form-control mb-2" formControlName="designation" placeholder="Type designation" name="" type="text" />
+              <div class="invalid-feedback text-capitalize" *ngIf="submitted && !addEditForm.controls['designation'].valid">Name is required</div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="form-group">
+              <label>Signature</label>
+              <input class="form-control mb-2 dashed-b-control" name="" type="text" disabled="disabled" />
+            </div>
+          </div>
+        </div>
+      </div>
+    <div *ngIf="!init" class="p-3">
+      <p class="line-height-3">
+        The laboratory has the capabilities and the resources to carry out the testing as per the standard _ _ _ _ _ _ _ _ _ _ _
+        _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+        _ _ _ _ _ _ _ _ _ _ _ _ as required by customer.
+        <label class="radio-container d-inline ml-3">Yes
+          <input value="1" type="radio" name="yesno">
+          <span class="checkmark"></span>
+        </label>
+        <label class="radio-container d-inline ml-3">No
+          <input value="2" type="radio" name="yesno">
+          <span class="checkmark"></span>
+        </label>
+      </p>
+    </div>
+    <div *ngIf="!init" class="p-3">
+      <div class="d-flex justify-content-end">
+        <div class="mr-5">
+          <p>Reviewed and Approved by: Technical Manager</p>
+        </div>
+        <div>
+          <div class="form-group">
+            <label>Signature</label>
+            <input class="form-control mb-2 dashed-b-control" name="" type="text" disabled="disabled" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+</div>

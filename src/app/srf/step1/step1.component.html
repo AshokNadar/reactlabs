@@ -1,0 +1,280 @@
+<div class="container-fluid bg-fff box-shadow-1 position-relative z-index-0">
+    <div class="d-flex justify-content-start">
+      <a class="cursor-pointer" [routerLink]="['/home/my-application']">
+        <div class="pt-3 mr-3 d-inline-block">
+          <span class="sprite-img s-back"></span>
+        </div>
+        <div class="pt-3 fs-16 fw-600 text-5d5 d-inline-block">
+          SRF Form
+        </div>
+      </a>
+      <div class="ml-5 pl-4">
+        <div class="step-top-container">
+          <div class="d-flex justify-content-start">
+            <div class="step-top fw-600 active">
+              1 Basic
+            </div>
+            <div class="step-top fw-600">
+              2 Product
+            </div>
+            <div class="step-top fw-600">
+              3 Declaration
+            </div>
+            <div class="step-top fw-600">
+              4 Summary
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="container-fluid">
+  <div class="page-wrapper">
+      <div class="d-flex justify-content-between" *ngIf="!init">
+        <p class="fs-14 fw-600 text-a5a">Basic <span class="sprite-img s-down-arrow"></span></p>
+        <div class="" *ngIf="viewAs == 0">
+          <div class="mb-2" [hidden]="loading">
+            <button routerLink="/home/my-application"   class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Cancel</button>
+            <button (click)="submitForm()" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Save & Next <span class="ml-3">></span></button>
+          </div>
+          <div class="mb-2" [hidden]="!loading">
+              <button (click)="submitForm()" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Please Wait... <span class="ml-3">></span></button>
+          </div>
+        </div>
+        <div class="" *ngIf="viewAs == 1">
+            <div class="mb-2" [hidden]="loading">
+                <button routerLink="/home/my-application"   class="btn btn-dotter-b text-5d5 fs-12 py-1 px-5 fw-600 mr-3 d-inline-block">Cancel</button>
+                <button [routerLink]="['/home/srf/step-2/',manufacturerRequestsId]" class="btn btn-orange text-fff fs-12 py-1 px-2 fw-600 d-inline-block">Next <span class="ml-3">></span></button>
+              </div>
+        </div>
+      </div>
+      <div class="card py-4 px-5">       
+        <p [hidden]="!init">Please Wait...</p> 
+        <form *ngIf="!init" [formGroup]="addEditForm">  
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Applicant Name</label>
+                    <input class="form-control"  [ngClass]="{ 'is-invalid': submitted && validate.personName.errors }"  formControlName="personName" placeholder="Type Applicant name" name="" type="text" />
+                    <div *ngIf="submitted && validate.personName.errors" class="invalid-feedback">
+                      <div *ngIf="validate.personName.errors.required">Applicant Name is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Manufacturer/Factory Name</label>
+                    <input class="form-control"  [ngClass]="{ 'is-invalid': submitted && validate.companyName.errors }" formControlName="companyName" placeholder="Type Manufacturer/Factory Name" name="" type="text" />
+                    <div *ngIf="submitted && validate.companyName.errors" class="invalid-feedback">
+                        <div *ngIf="validate.companyName.errors.required">Manufacturer Name is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Applicant Address</label>
+                    <input class="form-control mb-2" [ngClass]="{ 'is-invalid': submitted && validate.personAddress1.errors }" formControlName="personAddress1" placeholder="address line 1" name="" type="text" />
+                    <div *ngIf="submitted && validate.personAddress1.errors" class="invalid-feedback">
+                        <div *ngIf="validate.personAddress1.errors.required">Address is required</div>
+                    </div>
+                    <input class="form-control mb-2" [ngClass]="{ 'is-invalid': submitted && validate.personCity.errors }"  formControlName="personCity" placeholder="town city" name="" type="text" />
+                    <div *ngIf="submitted && validate.personCity.errors" class="invalid-feedback">
+                        <div *ngIf="validate.personCity.errors.required">City is required</div>
+                    </div>
+                    <input class="form-control mb-2" [ngClass]="{ 'is-invalid': submitted && validate.personPincode.errors }"  formControlName="personPincode" placeholder="pincode" name="" type="text" />
+                    <div *ngIf="submitted && validate.personPincode.errors" class="invalid-feedback">
+                        <div *ngIf="validate.personPincode.errors.required">Pincode is required</div>
+                    </div>
+                    <select class="form-control mb-2" [ngClass]="{ 'is-invalid': submitted && validate.personCountryId.errors }"  formControlName="personCountryId" placeholder="country" name="">
+                      <option value="0" disabled selected>Select country</option>
+                      <option *ngFor="let item of defaultData.step1.countries" [value]="item.id" >{{item.name}}</option>
+                    </select>
+                    <div *ngIf="submitted && validate.personCountryId.errors" class="invalid-feedback">
+                        <div *ngIf="validate.personCountryId.errors.required">Country is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Manufacturer Address</label>
+                    <input class="form-control mb-2" [ngClass]="{ 'is-invalid': submitted && validate.companyAddress1.errors }" formControlName="companyAddress1" placeholder="address line 1" name="" type="text" />
+                    <div *ngIf="submitted && validate.companyAddress1.errors" class="invalid-feedback">
+                        <div *ngIf="validate.companyAddress1.errors.required">Address is required</div>
+                    </div>
+                    <input class="form-control mb-2" [ngClass]="{ 'is-invalid': submitted && validate.companyCity.errors }" formControlName="companyCity" placeholder="town city" name="" type="text" />
+                    <div *ngIf="submitted && validate.companyCity.errors" class="invalid-feedback">
+                        <div *ngIf="validate.companyCity.errors.required">City is required</div>
+                    </div>
+                    <input class="form-control mb-2" [ngClass]="{ 'is-invalid': submitted && validate.companyPincode.errors }" formControlName="companyPincode" placeholder="pincode" name="" type="text" /> 
+                    <div *ngIf="submitted && validate.companyPincode.errors" class="invalid-feedback">
+                        <div *ngIf="validate.companyPincode.errors.required">Pincode is required</div>
+                    </div>
+                    <select class="form-control mb-2" [ngClass]="{ 'is-invalid': submitted && validate.companyCountryId.errors }" formControlName="companyCountryId" placeholder="country" name="">
+                      <option value="0" disabled selected>Select country</option>
+                      <option *ngFor="let item of defaultData.step1.countries" [value]="item.id" >{{item.name}}</option>
+                    </select>
+                    <div *ngIf="submitted && validate.companyCountryId.errors" class="invalid-feedback">
+                        <div *ngIf="validate.companyCountryId.errors.required">Country is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Applicant  Mobile</label>
+                    <input class="form-control mb-2"  [ngClass]="{ 'is-invalid': submitted && validate.personMobile.errors }" formControlName="personMobile" placeholder="type mobile number" name="" type="text" />
+                    <div *ngIf="submitted && validate.personMobile.errors" class="invalid-feedback">
+                        <div *ngIf="validate.personMobile.errors.required">Mobile is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Manufacturer Mobile</label>
+                    <input class="form-control mb-2"  [ngClass]="{ 'is-invalid': submitted && validate.companyMobile.errors }" formControlName="companyMobile" placeholder="type number" name="" type="text" />
+                    <div *ngIf="submitted && validate.companyMobile.errors" class="invalid-feedback">
+                        <div *ngIf="validate.companyMobile.errors.required">Mobile is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Applicant  Email</label>
+                    <input class="form-control mb-2"  [ngClass]="{ 'is-invalid': submitted && validate.personEmail.errors }" formControlName="personEmail" placeholder="type email" name="" type="text" />
+                    <div *ngIf="submitted && validate.personEmail.errors" class="invalid-feedback">
+                        <div *ngIf="validate.personEmail.errors.required">Email is required</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Manufacturer Email</label>
+                    <input class="form-control mb-2"  [ngClass]="{ 'is-invalid': submitted && validate.companyEmail.errors }" formControlName="companyEmail" placeholder="type email" name="" type="text" />
+                    <div *ngIf="submitted && validate.companyEmail.errors" class="invalid-feedback">
+                        <div *ngIf="validate.companyEmail.errors.required">Email is required</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Testing to be carried out as per</label>
+                    <div>
+                      <label *ngFor="let item of defaultData.step1.testingSpecifications" class="radio-container d-block mr-4">{{item.name}}
+                          <input type="radio" name="testingSpecificationId" id="testingSpecificationId" formControlName="testingSpecificationId" [value]="item.id">
+                          <span class="checkmark"></span>
+                      </label>                      
+                      <div *ngIf="submitted && validate.testingSpecificationId.errors" class="invalid-feedback">
+                          <div *ngIf="validate.testingSpecificationId.errors.required">Specification is required</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Purpose of testing</label>
+                    <div>
+                        <label *ngFor="let item of defaultData.step1.testingPurpose" class="radio-container d-block mr-4">{{item.name}}
+                            <input type="radio" name="testingPurposeId" id="testingPurposeId" formControlName="testingPurposeId" [value]="item.id">
+                            <span class="checkmark"></span>
+                        </label> 
+                        <div *ngIf="submitted && validate.testingPurposeId.errors" class="invalid-feedback">
+                            <div *ngIf="validate.testingPurposeId.errors.required">Purpose is required</div>
+                        </div>  
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Testing</label>
+                    <div>
+                        <label *ngFor="let item of defaultData.step1.testingRequirements" class="radio-container d-block mr-4">{{item.name}}
+                            <input type="radio" name="testingRequirementsId" id="testingRequirementsId" formControlName="testingRequirementsId" [value]="item.id">
+                            <span class="checkmark"></span>
+                        </label> 
+                        <div *ngIf="submitted && validate.testingRequirementsId.errors" class="invalid-feedback">
+                            <div *ngIf="validate.testingRequirementsId.errors.required">Testing Requirement is required</div>
+                        </div> 
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Any Failures to be informed?</label>
+                    <div>
+                      <label *ngFor="let item of defaultData.step1.failureInformed" class="radio-container d-block mr-4">{{item.name}}
+                          <input type="radio" name="testingFailureInformId" id="testingFailureInformId" formControlName="testingFailureInformId" [value]="item.id">
+                          <span class="checkmark"></span>
+                      </label> 
+                      <div *ngIf="submitted && validate.testingFailureInformId.errors" class="invalid-feedback">
+                          <div *ngIf="validate.testingFailureInformId.errors.required">Failure Informed is required</div>
+                      </div> 
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Witness of Testing</label>
+                    <div>
+                        <label *ngFor="let item of defaultData.step1.witnessTesting" class="radio-container d-block mr-4">{{item.name}}
+                            <input type="radio" name="testingWitnessId" id="testingWitnessId" formControlName="testingWitnessId" [value]="item.id">
+                            <span class="checkmark"></span>
+                        </label> 
+                        <div *ngIf="submitted && validate.testingWitnessId.errors" class="invalid-feedback">
+                            <div *ngIf="validate.testingWitnessId.errors.required">Witness is required</div>
+                        </div> 
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Test report required?</label>
+                    <div>
+                        <label *ngFor="let item of defaultData.step1.testReport" class="radio-container d-block mr-4">{{item.name}} 
+                            <input type="radio" name="testingReportId" id="testingReportId" formControlName="testingReportId" [value]="item.id">
+                            <span class="checkmark"></span>
+                        </label> 
+                        <div *ngIf="submitted && validate.testingReportId.errors" class="invalid-feedback">
+                            <div *ngIf="validate.testingReportId.errors.required">Report is required</div>
+                        </div> 
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>In case of failures, testing to be continued?</label>
+                    <div>
+                        <label *ngFor="let item of defaultData.step1.testToContinue" class="radio-container d-block mr-4">{{item.name}}
+                            <input type="radio" name="testingContinueId" id="testingContinueId" formControlName="testingContinueId" [value]="item.id">
+                            <span class="checkmark"></span>
+                        </label> 
+                        <div *ngIf="submitted && validate.testingContinueId.errors" class="invalid-feedback">
+                            <div *ngIf="validate.testingContinueId.errors.required">Testing Continue is required</div>
+                        </div> 
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label>Sample collection at the end of testing?</label>
+                    <div>
+                        <label *ngFor="let item of defaultData.step1.testingSampleCollection" class="radio-container d-block mr-4">{{item.name}} 
+                            <input type="radio" name="testingSampleCollectionId" id="testingSampleCollectionId" formControlName="testingSampleCollectionId" [value]="item.id">
+                            <span class="checkmark"></span>
+                        </label> 
+                        <div *ngIf="submitted && validate.testingSampleCollectionId.errors" class="invalid-feedback">
+                            <div *ngIf="validate.testingSampleCollectionId.errors.required">Sample Collection is required</div>
+                        </div> 
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                    <button class="btn btn-dotter-o text-f9a py-2 px-4 mt-4 fs-12 text-wrap">For performance and development testing, sample can be collected after completion of testing.</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>
